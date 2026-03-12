@@ -1,3 +1,5 @@
+import { resumeToPipeableStream } from "react-dom/server"
+
 /**
  * 📦 Pincode Type Checker - Type Checking
  *
@@ -22,7 +24,6 @@
  *
  *   2. isValidParcelWeight(weight)
  *      - Number.isFinite() se check karo ki weight valid finite number hai
- *      - Weight positive bhi hona chahiye (> 0)
  *      - Infinity, NaN, ya non-number ke liye return false
  *      - Example: isValidParcelWeight(2.5) => true
  *      - Example: isValidParcelWeight(Infinity) => false
@@ -42,15 +43,15 @@
  *      - Example: isNotANumber(NaN) => true
  *      - Example: isNotANumber("hello") => false
  *      - Example: isNotANumber(undefined) => false
- *
- *   5. isTruthy(value)
- *      - Boolean(value) se check karo ki value truthy hai ya nahi
- *      - JS mein Falsy values: false, 0, "", null, undefined, NaN
- *      - Sab kuch aur truthy hai (including [], {}, "0", "false")!
- *      - Example: isTruthy("hello") => true
- *      - Example: isTruthy(0) => false
- *      - Example: isTruthy([]) => true (haan, empty array truthy hai!)
- *
+  *
+  *   5. isTruthy(value)
+  *      - Boolean(value) se check karo ki value truthy hai ya nahi
+  *      - JS mein Falsy values: false, 0, "", null, undefined, NaN
+  *      - Sab kuch aur truthy hai (including [], {}, "0", "false")!
+  *      - Example: isTruthy("hello") => true
+  *      - Example: isTruthy(0) => false
+  *      - Example: isTruthy([]) => true (haan, empty array truthy hai!)
+  *
  * @example
  *   getDataType(null)            // => "null"
  *   getDataType([1,2,3])         // => "array"
@@ -59,20 +60,39 @@
  */
 export function getDataType(value) {
   // Your code here
+  if (value === null){
+    return "null"
+  }
+
+  if (Array.isArray(value)){
+    return "array"
+  }
+  return typeof value
+
 }
 
 export function isValidParcelWeight(weight) {
   // Your code here
+  if (!Number.isFinite(weight)){
+    return false
+  }
+  if (weight <= 0){
+    return false
+  }
+  return true
 }
 
 export function isWholeNumber(value) {
   // Your code here
+  return Number.isInteger(value)
 }
 
 export function isNotANumber(value) {
   // Your code here
+  return Number.isNaN(value)
 }
 
 export function isTruthy(value) {
+  return Boolean(value)
   // Your code here
 }

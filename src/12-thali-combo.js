@@ -54,16 +54,88 @@
  */
 export function createThaliDescription(thali) {
   // Your code here
+  if (
+    typeof thali !== "object" ||
+    thali === null ||
+    !Array.isArray(thali.items) ||
+    typeof thali.price !== "number" ||
+    typeof thali.isVeg !== "boolean" ||
+    typeof thali.name !== "string"
+  ) {
+    return "";
+  }
+  let menuname = thali.name.toUpperCase();
+  let price = thali.price.toFixed(2);
+  let type = thali.isVeg ? "Veg" : "Non-Veg";
+  let itme = thali.items.join(", ");
+  return `${menuname} (${type}) - Items: ${itme} - Rs.${price}`;
 }
 
 export function getThaliStats(thalis) {
-  // Your code here
+  if (!Array.isArray(thalis) || thalis.length === 0) {
+    return null;
+  }
+
+  let totalThalis = thalis.length;
+
+  let vegCount = thalis.filter(c => c.isVeg).length;
+  let nonVegCount = thalis.filter(c => !c.isVeg).length;
+
+  let names = thalis.map(n => n.name);
+
+  let total = thalis.reduce((sum, c) => sum + c.price, 0);
+  let avgPrice = (total / totalThalis).toFixed(2);
+
+  let prices = thalis.map(n => n.price);
+
+  let cheapest = Math.min(...prices);
+  let costliest = Math.max(...prices);
+
+  return {
+    totalThalis,
+    vegCount,
+    nonVegCount,
+    avgPrice,
+    cheapest,
+    costliest,
+    names,
+  };
 }
 
 export function searchThaliMenu(thalis, query) {
   // Your code here
+  if (!Array.isArray(thalis) || typeof query !== "string"){
+    return []
+  }
+  let q=query.toLowerCase()
+  return thalis.filter((i)=>{
+  let Thali_name=  i.name.toLowerCase().includes(q)
+
+  let item_name = i.items.some((item)=>{
+   return item.toLowerCase().includes(q)
+  })
+
+  return Thali_name || item_name
+  })
+  
 }
 
 export function generateThaliReceipt(customerName, thalis) {
   // Your code here
+  if (typeof customerName !== "string" || !Array.isArray(thalis) || thalis.length === 0){
+    return ""
+  }
+  let c_name = customerName.toUpperCase()
+  let Line_order =  thalis.map((v)=>{
+   return  `- ${v.name} x Rs.${v.price}`
+  }).join("\n")
+
+  let total =thalis.reduce((sum,v)=>{
+   return  sum += v.price
+  },0)
+  let count = thalis.length
+
+  return `
+  THALI RECEIPT\n---\nCustomer: ${c_name}\n${Line_order}\n---\nTotal: Rs.${total}\nItems: ${count}
+  ` 
 }

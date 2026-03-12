@@ -1,3 +1,6 @@
+import { useTransition } from "react"
+import { resumeToPipeableStream } from "react-dom/server"
+
 /**
  * 🏪 Kiryana Store Bill - Array Transform
  *
@@ -52,20 +55,48 @@
  */
 export function getItemNames(items) {
   // Your code here
+  if (!Array.isArray(items)) return []
+ return  items.map((itm)=> itm.name )
 }
 
 export function getAffordableItems(items, maxPrice) {
   // Your code here
+  if(!Array.isArray(items) ||  typeof maxPrice !== "number"){
+    return []
+  }
+  return items.filter((itm)=>{
+    return itm.price <= maxPrice
+  })
+
 }
 
 export function calculateTotal(items) {
   // Your code here
+  if(!Array.isArray(items) || items.length ===0) return 0
+  return items.reduce((total,quantity)=>{
+  return total + (quantity.price * quantity.qty)
+  },0)
 }
 
 export function sortByPrice(items, ascending) {
   // Your code here
+  if (!Array.isArray(items))return []
+  return  [...items].sort((a,b)=>{
+    if(ascending){
+      return a.price - b.price
+    }else {
+      return b.price - a.price
+    }
+  })
 }
 
 export function formatBill(items) {
   // Your code here
+  if(!Array.isArray(items) || items.length ===0) return ""
+
+  return items.map((n)=>{
+    let total =  n.price * n.qty 
+    return `${n.name} x ${n.qty} = Rs.${total}`
+  })
+  .join("\n")
 }
